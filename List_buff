@@ -1,0 +1,157 @@
+#ifndef LIST1_H_INCLUDED
+#define LIST1_H_INCLUDED
+#include <iostream>
+#include <bitset>
+using namespace std;
+enum err {ERR_MEM=0,EMPTY_LIST=1,PTR_THE_END=2};
+typedef int TElem;
+template<typename T>
+class List1
+{
+private:
+    struct Node
+    {
+        T Data;
+        Node *next;
+    };
+    typedef Node *PNode;
+    PNode Pb,Pt;
+    unsigned errorcode;
+    std::bitset<3> bit;
+public:
+    List1()
+    {
+        bit.reset(0);
+        PNode p=new Node;
+        if(p==NULL)
+            bit.set(0);
+        else
+        {
+            p->next=p;
+            Pb=p;
+            Pt=p;
+        }
+    }
+    void makeEmpty()
+    {
+        PNode p;
+        if(Pb->next!=Pb)
+        {
+            p=Pb->next;
+            Pb->next=NULL;
+            Pb=p;
+            while(Pb->next!=NULL)
+            {
+                Pb=p->next;
+                p=Pb;
+            }
+            p->next=p;
+            Pt=Pb;
+        }
+    }
+    void push(T _Data)
+    {
+        bit.reset(0);
+        PNode p = new Node;
+        if(p==NULL)
+            bit.set(0);
+        else
+        {
+            p->next=Pt->next;
+            p->Data=_Data;
+            Pt->next=p;
+        }
+    }
+    void pop(T &_Data)
+    {
+        bit.reset(1);
+        if(inTheEnd())
+            bit.set(1);
+        else
+        {
+            PNode p;
+            p=Pt->next;
+            _Data=p->Data;
+            Pt->next=p->next;
+        }
+    }
+    void get(T &_Data)
+    {
+        bit.reset(1);
+        if(inTheEnd())
+            bit.set(1);
+        else
+        {
+            _Data=Pt->next->Data;
+        }
+    }
+    bool inTheEnd()
+    {
+        bool t=false;
+        if(Pt->next==Pb)
+            t=true;
+        return t;
+    }
+    bool isEmpty()
+    {
+        bool e=false;
+        if(Pb->next==Pb)
+            e=true;
+        return e;
+    }
+    void move_forward()
+    {
+        bit.reset(1);
+        if(inTheEnd())
+            bit.set(1);
+        else
+        {
+            Pt=Pt->next;
+        }
+    }
+    void move_beg()
+    {
+        Pt=Pb;
+    }
+    ~List1()
+    {
+		makeEmpty();
+    }
+    void delete_after(){
+		PNode p;
+		bit.reset(1);
+		if(inTheEnd())bit.set(1);
+		else{
+			p=Pt->next;
+			Pt->next=p->next;
+		}
+    }
+	void put(T _Data){
+		bit.reset(1);
+		if(inTheEnd())bit.set(1);
+		else{
+			Pt->next->Data=_Data;
+		}
+	}
+	List1(List1<T> &L){
+		PNode p;
+		bit.reset(0);
+		if(L.Pb==NULL)bit.set(0);
+		else{
+			p=L.Pb;
+			while(p->next!=L.Pb){
+				p=p->next;
+                push(p->Data);
+				if(bit.test(0)){
+					makeEmpty();
+				}
+				else{
+					move_forward();
+				}
+			}
+			move_beg();
+		}
+	}
+};
+
+#endif // LIST1_H_INCLUDED
