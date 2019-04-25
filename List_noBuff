@@ -1,0 +1,118 @@
+#ifndef L1IST_MODULE_H_INCLUDED
+#define L1IST_MODULE_H_INCLUDED
+#include <iostream>
+#include <bitset>
+using namespace std;
+enum err{ERR_MEM=1,EMPTY_LIST=2};
+typedef int TElem;
+//typedef unsigned short int USI;
+template<typename T>
+class List1{
+private:
+    struct Node{
+        T Data;
+        Node *next;
+    };
+    typedef Node *PNode;
+    PNode Sprt,Head;
+   // USI errcode;
+    int errcode;
+    std::bitset<3> bits;
+public:
+
+    void err_clear(){
+        bits.reset(0);
+        bits.reset(1);
+        bits.reset(2);
+    }
+    int fail(){
+        if(bits.test(0))errcode=ERR_MEM;
+        if(bits.test(1))errcode=EMPTY_LIST;
+        return errcode;
+    }
+    List1(){
+        Head=NULL;
+        Sprt=NULL;
+        errcode=0;
+    }
+    void push(T _Data){
+        bits.reset(0);
+        PNode NewNode = new Node;
+        if(NewNode==NULL)bits.set(0);
+        else{
+            NewNode->Data=_Data;
+            NewNode->next=NULL;
+            if(Head==NULL){
+                NewNode->next=Head;
+                Head=NewNode;
+                Sprt=Head;
+            }
+            else{
+                NewNode->next=Sprt->next;
+                Sprt->next=NewNode;
+            }
+        }
+
+    }
+
+    void seePtr(T &_Data){
+        bits.reset(1);
+        PNode NewNode;
+        NewNode=Sprt;
+        if(Head==NULL)bits.set(1);
+        else{
+            _Data=NewNode->Data;
+        }
+    }
+    void move_forward(){
+        if(Sprt->next){
+            Sprt=Sprt->next;
+        }
+        else{
+            move_beg();
+        }
+    }
+    void move_beg(){
+        bits.reset(1);
+        if(Head){
+            Sprt=Head;
+        }
+        else bits.set(1);
+    }
+    bool isEmpty(){
+        bool Empty=false;
+        if(Head==NULL)Empty=true;
+        return Empty;
+    }
+    bool inTheEnd(){
+        bool inEnd=false;
+        if(Sprt->next==NULL)inEnd = true;
+        return inEnd;
+    }
+    void makeEmpty(){
+        PNode tmp;
+        PNode NewNode;
+        Sprt=Head;
+        NewNode=Head;
+        while(NewNode->next!=NULL){
+            tmp=NewNode;
+            NewNode=NewNode->next;
+            delete NewNode;
+            tmp = NULL;
+        }
+        Head=NULL;
+    }
+    void pop(T& _Data){
+        bits.reset(1);
+        if(NewNode==NULL)bits.set(1);
+        else{
+            _Data=Sprt->Data;
+            PNode tmp=Sprt;
+            Sprt=Sprt->next;
+            delete Sprt;
+            tmp = NULL;
+        }
+    }
+};
+
+#endif // L1IST_MODULE_H_INCLUDED
